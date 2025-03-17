@@ -1,3 +1,8 @@
+// `rustup override set nightly` to switch to nightly
+// and
+// `rustup override set stable` to switch back
+
+pub mod integer;
 pub mod matrix;
 pub mod utils;
 pub mod vector;

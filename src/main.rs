@@ -1,21 +1,21 @@
-use lattice::Matrix;
+use std::error::Error;
 
-fn main() {
-    let data = vec![
-            1.2, 8.7, -66.0, 3.0,
-            333.0, 2.0, 4.0, 53.0,
-            -0.53, -34.0, 22.0, 3.0,
-            -234.0, 3.02, 1.0, 23.0
-        ];
-       println!("{}", Matrix::new(4, 4, data).determinant());
+use lattice::integer;
+use num_bigint::BigInt;
 
-    // let inv = mat.inverse();
-    // inv.print();
+fn main() -> Result<(), Box<dyn Error>> {
+    
+    let y = BigInt::from(99544);
+    let p = BigInt::from(611837);
+    let q = BigInt::from(611953);
 
-    // println!("--------------------");
-    // inv.mul(&mat).print();
+    let x = integer::mod_quad_eq(&y, &p, &q);
 
+    if let Some(x) = x {
+        println!("{x}");
+    } else {
+        println!("No solution!");
+    }
 
-    // let (l, u) = mat.lu_decomposition();
-    // let mat1 = l.mul(&u);
+    Ok(())
 }

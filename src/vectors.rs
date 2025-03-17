@@ -18,6 +18,9 @@ pub fn is_orthogonal(vectors: &Vec<Vector>) -> bool {
     true
 }
 
+/// Takes a set of linearly independent vectors and transforms them into a set of orthogonal vectors.
+/// Notes that the resulting orthogonal vectors from this process span the same subspace
+/// as the original set of vectors. 
 pub fn gram_schmidt(vectors: &Vec<Vector>) -> Vec<Vector> {
     let mut basis = vec![];
     let zero = Vector::zero(vectors[0].size());
@@ -50,7 +53,7 @@ mod tests {
 
     #[test]
     fn test_gram_schmidt_trivial() {
-        let v1= Vector::from_int(&[3, 6, 0]);
+        let v1 = Vector::from_int(&[3, 6, 0]);
         let vectors = vec![v1];
 
         let basis = gram_schmidt(&vectors);
@@ -59,7 +62,7 @@ mod tests {
 
     #[test]
     fn test_gram_schmidt1() {
-        let v1= Vector::from_int(&[3, 6, 0]);
+        let v1 = Vector::from_int(&[3, 6, 0]);
         let v2 = Vector::from_int(&[1, 2, 2]);
 
         let vectors = vec![v1, v2];
@@ -95,6 +98,9 @@ mod tests {
         let basis = gram_schmidt(&vectors);
         assert_eq!(basis[0], Vector::from_int(&[1, 1, 1, 1]));
         assert_eq!(basis[1], Vector::new(&[-0.75, 0.25, 0.25, 0.25]));
-        assert_eq!(basis[2], Vector::new(&[0.0, -2.0/3.0, 1.0/3.0, 1.0/3.0]));
+        assert_eq!(
+            basis[2],
+            Vector::new(&[0.0, -2.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0])
+        );
     }
 }

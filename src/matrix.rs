@@ -12,11 +12,11 @@ impl Matrix {
         Self { rows, cols, data }
     }
 
-    pub fn zero(rows: usize, cols: usize)-> Matrix {
-        Matrix::new(rows, cols, vec![0.0; rows*cols])
+    pub fn zero(rows: usize, cols: usize) -> Matrix {
+        Matrix::new(rows, cols, vec![0.0; rows * cols])
     }
 
-    pub fn identity(rows: usize, cols: usize) -> Matrix{
+    pub fn identity(rows: usize, cols: usize) -> Matrix {
         let mut mat = Matrix::zero(rows, cols);
         for i in 0..rows {
             mat.set(i, i, 1.0);
@@ -100,7 +100,7 @@ impl Matrix {
         Matrix::new(self.cols, self.rows, data)
     }
 
-    pub fn inverse(&self) -> Matrix{
+    pub fn inverse(&self) -> Matrix {
         if self.rows != self.cols {
             panic!("Matrix must be square.");
         }
@@ -142,11 +142,11 @@ impl Matrix {
             for row in (pivot_row + 1)..n {
                 let factor = augmented.get(row, pivot_row);
                 for col in 0..(2 * n) {
-                    let new_value = augmented.get(row, col) - factor * augmented.get(pivot_row, col);
+                    let new_value =
+                        augmented.get(row, col) - factor * augmented.get(pivot_row, col);
                     augmented.set(row, col, new_value);
                 }
             }
-
         }
 
         // Back substitution
@@ -155,7 +155,8 @@ impl Matrix {
             for row in (0..pivot_row).rev() {
                 let factor = augmented.get(row, pivot_row);
                 for col in 0..(2 * n) {
-                    let new_value = augmented.get(row, col) - factor * augmented.get(pivot_row, col);
+                    let new_value =
+                        augmented.get(row, col) - factor * augmented.get(pivot_row, col);
                     augmented.set(row, col, new_value);
                 }
             }
@@ -170,7 +171,6 @@ impl Matrix {
         }
 
         inverse
-
     }
 
     fn swap_rows(&mut self, row1: usize, row2: usize) {
@@ -230,13 +230,13 @@ impl Matrix {
         det
     }
 
-    pub fn print(&self) {    
+    pub fn print(&self) {
         for i in 0..self.rows {
             for j in 0..self.cols {
                 print!("{:.4} ", self.get(i, j));
             }
             print!("\n");
-        }  
+        }
     }
 
     /// Computes three matrices `P`, `L`, `U` for a matrix `A` such that
@@ -251,7 +251,7 @@ impl Matrix {
             println!("ITER #{k}:");
             // Pivoting
             let mut max_row = k;
-            for i in k+1..n {
+            for i in k + 1..n {
                 if mat_u.get(i, k).abs() > mat_u.get(max_row, k).abs() {
                     max_row = i;
                 }
@@ -266,15 +266,15 @@ impl Matrix {
                 for j in 0..k {
                     let temp = mat_l.get(k, j);
                     mat_l.set(k, j, mat_l.get(max_row, j));
-                    mat_l.set(max_row, j,temp);
+                    mat_l.set(max_row, j, temp);
                 }
             }
 
             if is_equal(mat_u.get(k, k), 0.0) {
                 panic!("Matrix is singlular an therefore not invertible.");
             }
-       
-            for i in k+1..n {
+
+            for i in k + 1..n {
                 let factor = mat_u.get(i, k) / mat_u.get(k, k);
                 mat_l.set(i, k, factor);
                 for j in k..n {
@@ -286,7 +286,6 @@ impl Matrix {
 
         (mat_p, mat_l, mat_u)
     }
-
 }
 
 impl PartialEq for Matrix {
@@ -297,7 +296,7 @@ impl PartialEq for Matrix {
 
         for i in 0..self.rows {
             for j in 0..self.cols {
-                if !is_equal(self.get(i, j),rhs.get(i, j)) {
+                if !is_equal(self.get(i, j), rhs.get(i, j)) {
                     return false;
                 }
             }
@@ -345,7 +344,7 @@ mod tests {
     #[test]
     fn test_identity() {
         let mat = Matrix::identity(3, 3);
-        
+
         for i in 0..mat.rows() {
             for j in 0..mat.cols() {
                 if i == j {
@@ -361,7 +360,7 @@ mod tests {
     fn test_inverse1() {
         let mat = Matrix::new(1, 1, vec![1.0]);
         let inv = mat.inverse();
-        
+
         assert_eq!(mat.mul(&inv), Matrix::identity(1, 1));
     }
 
@@ -369,7 +368,7 @@ mod tests {
     fn test_inverse2() {
         let mat = Matrix::new(2, 2, vec![1.0, 2.0, 3.0, 4.0]);
         let inv = mat.inverse();
-        
+
         assert_eq!(mat.mul(&inv), Matrix::identity(2, 2));
     }
 
@@ -377,7 +376,7 @@ mod tests {
     fn test_inverse3() {
         let mat = Matrix::new(2, 2, vec![1.0, 0.0, 0.0, 1.0]);
         let inv = mat.inverse();
-        
+
         assert_eq!(mat.mul(&inv), Matrix::identity(2, 2));
     }
 
@@ -385,59 +384,49 @@ mod tests {
     fn test_inverse4() {
         let mat = Matrix::new(3, 3, vec![1.0, -4.0, 2.0, 1.0, 2.0, 3.0, 4.0, 1.0, 5.0]);
         let inv = mat.inverse();
-        
+
         assert_eq!(mat.mul(&inv), Matrix::identity(3, 3));
     }
 
     #[test]
     fn test_lu_decomposition1() {
-        let mat = Matrix::new(2, 2, vec![
-            1.0, 2.0,
-            3.0, 4.0,
-        ]);
+        let mat = Matrix::new(2, 2, vec![1.0, 2.0, 3.0, 4.0]);
 
-        let(p, l, u) = mat.lu_decomposition();
+        let (p, l, u) = mat.lu_decomposition();
         assert_eq!(p.mul(&mat), l.mul(&u));
     }
 
     #[test]
     fn test_lu_decomposition2() {
-        let mat = Matrix::new(3, 3, vec![
-            4.0, 3.0, 2.0,
-            3.0, 3.0, 1.0,
-            2.0, 1.0, 3.0,
-        ]);
+        let mat = Matrix::new(3, 3, vec![4.0, 3.0, 2.0, 3.0, 3.0, 1.0, 2.0, 1.0, 3.0]);
 
-        let l_expected = Matrix::new(3, 3, vec![
-            1.0,   0.0,  0.0,
-            0.75,  1.0,  0.0,
-            0.5,  -2.0/3.0, 1.0,
-        ]);
+        let l_expected = Matrix::new(
+            3,
+            3,
+            vec![1.0, 0.0, 0.0, 0.75, 1.0, 0.0, 0.5, -2.0 / 3.0, 1.0],
+        );
 
-        let u_expected = Matrix::new(3, 3, vec![
-            4.0,   3.0,  2.0,
-            0.0,  0.75,  -0.5,
-            0.0,  0.0, 5.0/3.0,
-        ]);
+        let u_expected = Matrix::new(
+            3,
+            3,
+            vec![4.0, 3.0, 2.0, 0.0, 0.75, -0.5, 0.0, 0.0, 5.0 / 3.0],
+        );
 
-        let(p, l, u) = mat.lu_decomposition();
+        let (p, l, u) = mat.lu_decomposition();
         assert_eq!(l_expected, l);
         assert_eq!(u_expected, u);
         assert_eq!(p.mul(&mat), l.mul(&u));
-
     }
 
     #[test]
     fn test_lu_decomposition3() {
         let data = vec![
-            1.2,     8.7,   -66.0,  3.0,
-            333.0,   2.0,    4.0,   53.0,
-            -0.53,  -34.0,   22.0,  3.0,
-            -234.0,  3.02,   1.0,   23.0
+            1.2, 8.7, -66.0, 3.0, 333.0, 2.0, 4.0, 53.0, -0.53, -34.0, 22.0, 3.0, -234.0, 3.02,
+            1.0, 23.0,
         ];
 
         let mat = Matrix::new(4, 4, data);
-        let(p, l, u) = mat.lu_decomposition();
+        let (p, l, u) = mat.lu_decomposition();
         assert_eq!(p.mul(&mat), l.mul(&u));
     }
 
@@ -445,19 +434,31 @@ mod tests {
     fn test_determinant() {
         assert!(is_equal(0.0, Matrix::zero(2, 2).determinant()));
         assert!(is_equal(1.0, Matrix::identity(2, 2).determinant()));
-        assert!(is_equal(-2.0, Matrix::new(2, 2, vec![1.0, 2.0, 3.0, 4.0]).determinant()));
+        assert!(is_equal(
+            -2.0,
+            Matrix::new(2, 2, vec![1.0, 2.0, 3.0, 4.0]).determinant()
+        ));
         assert!(is_equal(-1.5, Matrix::new(1, 1, vec![-1.5]).determinant()));
-        assert!(is_equal(0.0, Matrix::new(3, 3, vec![1.0, 2.0, 3.0, -1.0, 2.0, -4.0, 3.0, 6.0, 9.0]).determinant()));
-        assert!(is_equal(0.0, Matrix::new(3, 3, vec![1.0, 2.0, 3.0,  -2.0, -4.0, -4.0, 3.0, 6.0, 8.0]).determinant()));
-        assert!(is_equal(0.0, Matrix::new(3, 3, vec![0.0, 2.0, 3.0,  0.0, -4.0, -4.0, 0.0, 2.0, 5.0]).determinant()));
+        assert!(is_equal(
+            0.0,
+            Matrix::new(3, 3, vec![1.0, 2.0, 3.0, -1.0, 2.0, -4.0, 3.0, 6.0, 9.0]).determinant()
+        ));
+        assert!(is_equal(
+            0.0,
+            Matrix::new(3, 3, vec![1.0, 2.0, 3.0, -2.0, -4.0, -4.0, 3.0, 6.0, 8.0]).determinant()
+        ));
+        assert!(is_equal(
+            0.0,
+            Matrix::new(3, 3, vec![0.0, 2.0, 3.0, 0.0, -4.0, -4.0, 0.0, 2.0, 5.0]).determinant()
+        ));
 
         let data = vec![
-            1.2,     8.7,   -66.0,  3.0,
-            333.0,   2.0,    4.0,   53.0,
-            -0.53,  -34.0,   22.0,  3.0,
-            -234.0,  3.02,   1.0,   23.0
+            1.2, 8.7, -66.0, 3.0, 333.0, 2.0, 4.0, 53.0, -0.53, -34.0, 22.0, 3.0, -234.0, 3.02,
+            1.0, 23.0,
         ];
-        assert!(is_equal(4.1731256061e7, Matrix::new(4, 4, data).determinant()));
-
+        assert!(is_equal(
+            4.1731256061e7,
+            Matrix::new(4, 4, data).determinant()
+        ));
     }
 }
